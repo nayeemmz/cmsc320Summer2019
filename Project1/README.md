@@ -1,207 +1,291 @@
+# Project 1
 
----
-layout: page
-mathjax: true
-title: Image Classification Using Convolutional Neural Networks
-permalink: /2019/proj/p4/
----
+#### _CMSC320_
 
-Table of Contents:
-- [Deadline](#due)
-- [Introduction](#intro)
-- [Implementation Overview](#system_overview)
-- [Submission Guidelines](#sub)
-- [Collaboration Policy](#coll)
+**Posted:** September 13, 2018; 
+**Last Updated:** September 13, 2018; 
+**Due:** September 28, 2018
 
-<a name='due'></a>
-## Deadline 
-11:59 PM, May 17, 2019
+You've been hired by a new space weather startup looking to disrupt the space weather reporting business. Your first project is to provide better data about the top 50 solar flares recorded so far than that shown by your competitor [SpaceWeatherLive.com](https://www.spaceweatherlive.com/en/solar-activity/top-50-solar-flares). To do this, they've pointed you to [this messy HTML page](http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html) from NASA ([available here also](http://www.hcbravo.org/IntroDataSci/misc/waves_type2.html)) where you can get the extra data your startup is going to post in your new spiffy site.
 
-<a name='intro'></a>
-## Introduction
-In this project you will implement a convolutional neural network (CNN). You will be building a supervised classifier to classify MNIST digits dataset.  
+Of course, you don't have access to the raw data for either of these two tables, so as an enterprising data scientist you will scrape this information directly from each HTML page using all the great tools available to you in Python. By the way, you should read up a bit on [Solar Flares](https://en.wikipedia.org/wiki/Solar_flare), [coronal mass ejections](https://www.spaceweatherlive.com/en/help/what-is-a-coronal-mass-ejection-cme), [the solar flare alphabet soup](http://spaceweather.com/glossary/flareclasses.html), [the scary storms of Halloween 2003](http://www.nasa.gov/topics/solarsystem/features/halloween_storms.html), and [sickening solar flares](https://science.nasa.gov/science-news/science-at-nasa/2005/27jan_solarflares).
 
-Supervised classification is a computer vision task of categorizing unlabeled images to different categories or classes. This follows the training using labeled images of the same categories. You will be provided with a data set of images of MNIST digits. All of these images will be specifically labeled as a specific digit. You would use these labeled images as training data set to train a convolutional neural network. Once the CNN is trained you would test an unlabeled image and classify it as one of the ten digits. This task can be visualized in Figure 1.
+## Part 1: Data scraping and preparation
 
-<div class="fig fighighlight">
-  <img src="/assets/proj4/mnist.png" width="100%">
-  <div class="figcaption">
-  </div>
-  <div style="clear:both;"></div>
-</div>
+### Step 1: Scrape your competitor's data (10 pts)
 
-## Architecture
-Your training and test step would contain the pipeline shown in Figure 2
+Use Python to scrape data for the top 50 solar flares shown in [SpaceWeatherLive.com](https://www.spaceweatherlive.com/en/solar-activity/top-50-solar-flares). Steps to do this are:
 
-<div class="fig fighighlight">
-  <img src="/assets/proj4/architecture.png" width="100%">
-  <div class="figcaption">
-  </div>
-  <div style="clear:both;"></div>
-</div>
-You are provided a framework for a single convolution layer (convolution + subsampling), a fully connected neural network with Sigmoid activation function, and a cross-entropy softmax layer with ten outputs.  Next few sections present a description of each of these components of this network. 
+1.  `pip install` or `conda install` the following Python packages: `beautifulsoup4, requests, pandas, numpy`; these are already in the environment if you are using Docker.
+2.  Use `requests` to get (as in, HTTP GET) the URL
+3.  Extract the text from the page
+4.  Use BeautifulSoup to read and parse the data, either as html or lxml
+5.  Use prettify() to view the content and find the appropriate table
+6.  Use find() to save the aforementioned table as a variable
+7.  Use pandas to read in the HTML file.  HINT make-sure the above data is properly typecast.
+8.  Set reasonable names for the table columns, e.g., rank, x_classification, date, region, start_time, maximum_time, end_time, movie. `Pandas.columns` makes this very simple.
 
-## Fully Connected Layer
-In a fully connected layer each neuron is connected to every neuron of the previous layer as shown in Figure 3
-<div class="fig fighighlight">
-  <img src="/assets/proj4/fullyconnected.jpg" width="40%">
-  <div class="figcaption">
-  </div>
-  <div style="clear:both;"></div>
-</div>
 
-Each of these arrows (inputs) between the layers is associated with a weight. All these input weights can be represent by a 2-dimensional weight matrix, <b>W</b>. If the number of neurons in this layer is n<sub>c</sub> and the number of neurons in the previous layer is n<sub>p</sub>, then the dimensionality of the weight matrix <b>W</b> will be n<sub>c</sub> x n<sub>p</sub>. There is also a bias associated with each layer. For the current layer we will represent it by a vector, <b>b</b>,  with a size of n<sub>c</sub> x 1. Therefore, for a given input, <b>X</b>, the output, <b>Z</b>, of a fully connected layer is given by the equation:
+The result should be a data frame, with the first few rows as:
 
-Z = WX + b
+```
+Dimension: 50 × 8
 
-## Convolutional layer
-We will begin with a brief description of cross-correlation and convolution which are fundamental to a convolutional layer. Cross-correlation is a similarity measure between two signals when one has a time lag, represented in the continuous domain as
+rank x_class date region start_time max_time end_time movie
 
-<img src="/assets/proj4/crossCorrEq.jpg" width="40%">
+1  1 X28.0 2003/11/04 0486  19:29  19:53  20:06 MovieView archive
 
-Convolution is similar, although one signal is reversed
+2  2 X20 2001/04/02 9393  21:32  21:51  22:03 MovieView archive
 
-<img src="/assets/proj4/conv.jpg" width="25%">
+3  3 X17.2 2003/10/28 0486  09:51  11:10  11:24 MovieView archive
 
-They have two key  features, shift invariance and linearity. Shift invariance means that the same operation is performed at every point in the image and linearity means that every pixel is replaced with a linear combination of its neighbors.
+4  4 X17.0 2005/09/07 0808  17:17  17:40  18:03 MovieView archive
 
-In a convolutional layer an image is convolved with a filter. For example a 3 x 3 filter can be represented as
+5  5 X14.4 2001/04/15 9415  13:19  13:50  13:55 MovieView archive
 
-<img src="/assets/proj4/filter.jpg" width="25%">
+6  6 X10.0 2003/10/29 0486  20:37  20:49  21:01 MovieView archive
 
-Each number in this filter is referred to as a weight. The weights provided in this filter are example weights. Our goal is to learn the exact weights from the data during convolution. For each convolution layer a set of filters is learned. Use of convolution layer has many features but two stand out:
-<ul>
-<li> Reduction in parameters<br>
-  In a fully connected neural network the number of parameters is much larger than a convolution network. Consider an image of size 5 x 5 to be convolved with a filter of size, 3 x 3. The number of weights we would have to learn would be the total number of weights in the filter, which is, 9. On the contrary for the same image, using a fully connected layer would require us to learn 225 weights. This is demonstrated in below Figure
-  
-  <img src="/assets/proj4/params.jpg" width="100%">
-  </li>
-  <li> Exploitation of spatial structure <br>
-  Our images are in two-dimensions. In order to use them as an input to a fully connected layer, we need to unroll it into a vector and feed it as an input. This leads to the increase in the number of parameters to be learned as shown in the previous section and loss of the original 2D spatial structure. On the contrary, in convolution layer we can directly convolve a 2D image with a 2D filter thereby preserving the original spatial structure and also reducing the number of parameters to be learned.
-  </li>
-  </ul>
+7  7  X9.4 1997/11/06  -  11:49  11:55  12:01 MovieView archive
 
-<a name='system_overview'></a>
-## Implementation Overview
-Convolution involves multiplying each pixel in an image by the filter at each position, then summing them up and adding a
-bias. The figure below shows a single step of convolving an image with a filter. Each convolution will return a 2D matrix output for each input channel.
+8  8  X9.0 2006/12/05 0930  10:18  10:35  10:45 MovieView archive
 
-<img src="/assets/proj4/convolution.jpg" width="60%">
+9  9  X8.3 2003/11/02 0486  17:03  17:25  17:39 MovieView archive
 
-For example, if the input matrix is of size nxn and the filter is of size fxf, then the convolution output matrix will be of the size (n-f+1)x(n-f+1). The convolution output size remains the same even when there are more than one channels. For example, if there is an RGB image of size (nxnx3) and a filter of size (3x3x3), both with three channels, the convolution output will still be (n-f+1)x(n-f+1). However, if we convolve an image with more than a single filter then we will get a convolved image for each of those filters. For example, an image of size, (nxnx3), convolved with two filters, each of size, (nxnx3), will result in an output of size, (n-f+1)x(n-f+1)x2.
+10  10  X7.1 2005/01/20 0720  06:36  07:01  07:26 MovieView archive
 
-## Padding 
-You probably noticed that with convolution the image gets shrunk in size. This would be a problem in a large network. However, we can retain the size of convolution output by zero-padding the image as shown in the figure below
+ ... with 40 more rows
+```
 
-<img src="/assets/proj4/padding.jpg" width="75%">
+### Step 2: Tidy the top 50 solar flare data (10 pts)
 
-Padding helps to build deeper networks and keep more information at the border of an image. If there is an image of size nxnx1 and it is convolved with a filter of size fxfx1, in order to retain the original size, the output image would have to be of the size (n+2p-f+1) x (n+2p-f+1), where p is the zero-padding size, given by:
+Your next step is to make sure this table is usable using pandas:
 
-<img src="/assets/proj4/paddingeq.jpg" width="10%">
+1.  Drop the last column of the table, since we are not going to use it moving forward.
+2.  Use datetime import to combine the date and each of the three time columns into three datetime columns. You will see why this is useful later on.  iterrows() should prove useful here.
+3.  Update the values in the dataframe as you do this.  Set_value should prove useful.
+4.  Set regions coded as - as missing (NaN). You can use dataframe.replace() here.
 
-## Strides
-The number of pixels we slide between each step of the convolution of an image and a filter is called a stride. So far we have been sliding one pixel at a time and therefore the stride is 1. However, we could skip a pixel and the stride would be 2, if we skip 2 pixels the stride value will be 3, and so on and so forth. Depending on the value of the stride, the output image has the size,
+The result of this step should be a data frame with the first few rows as:
 
-<img src="/assets/proj4/strideeq.jpg" width="30%">
+```
+A dataframe: 50 × 6
 
-where the input image size is n x n, zero-padded with p columns and rows, with a stride, s, and convolved with a filter of size, f x f.
+rank x_class  start_datetime  max_datetime  end_datetime region
 
-## Pooling layer
-The pooling layer shrinks the size of the input image. Reduction in size reduces the computation. Max-pooling layer is demostrated by an example in the below figure
+1  1 X28.0 2003-11-04 19:29:00 2003-11-04 19:53:00 2003-11-04 20:06:00 0486
 
-<img src="/assets/proj4/maxpooling-2.jpg" width="60%">
+2  2 X20 2001-04-02 21:32:00 2001-04-02 21:51:00 2001-04-02 22:03:00 9393
 
-Maxpooling is similar to convolution, except, instead of convolving with a filter, we get the max value in each kernel. In this example, we use a max of f x f kernels of the image, with a padding of 0 and a stride of 1.
+3  3 X17.2 2003-10-28 09:51:00 2003-10-28 11:10:00 2003-10-28 11:24:00 0486
 
-Similarly, average pooling takes the average of each kernel as shown in teh figure below:
+4  4 X17.0 2005-09-07 17:17:00 2005-09-07 17:40:00 2005-09-07 18:03:00 0808
 
-<img src="/assets/proj4/averagepooling.png" width="40%">
+5  5 X14.4 2001-04-15 13:19:00 2001-04-15 13:50:00 2001-04-15 13:55:00 9415
 
-## Activation layer
+6  6 X10.0 2003-10-29 20:37:00 2003-10-29 20:49:00 2003-10-29 21:01:00 0486
 
-In order to learn complex and non-linear features we often need a non-linear function. One of the most common non-linear functions is a rectified linear unit (ReLU), as shown in Figure below
+7  7  X9.4 1997-11-06 11:49:00 1997-11-06 11:55:00 1997-11-06 12:01:00 <NA>
 
-<img src="/assets/proj4/ReLU.png" width="40%">
+8  8  X9.0 2006-12-05 10:18:00 2006-12-05 10:35:00 2006-12-05 10:45:00 0930
 
-This function is applied to each output of the previous layer and is defined as,
+9  9  X8.3 2003-11-02 17:03:00 2003-11-02 17:25:00 2003-11-02 17:39:00 0486
 
-<img src="/assets/proj4/relueq.jpg" width="20%">
+10  10  X7.1 2005-01-20 06:36:00 2005-01-20 07:01:00 2005-01-20 07:26:00 0720
 
-and demonstrated in the following figure
+ ... with 40 more rows
+```
 
-<img src="/assets/proj4/relu-conv.jpg" width="70%">
+### Step 3: Scrape the NASA data (15 pts)
 
-### Code
+Next you need to scrape the data in [http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html](http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html) ([also available here](http://www.hcbravo.org/IntroDataSci/misc/waves_type2.html)) to get additional data about these solar flares. This table format is described here: [http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2_description.htm](http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2_description.htm), and here:
 
-Some of the code is already implemented for you. The details of the starter files that are provided to you are as follows:<br>
-<ul>
-  <li> cnnTrain.m<br>
-    This is the driver file. The data sets are loaded from this file and so are various other functions
-  </li>
-  <li>cnnCost.m <br>
-    This file contains the code for backpropagation. It is already implemented for you.
-  </li>
-  <li>config.m <br>
+```
+The Wind/WAVES type II burst catalog: A brief description
+
+URL: [http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html](http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2.html).
+
+This is a catalog of type II bursts observed by the Radio and Plasma Wave (WAVES) experiment on board the Wind spacecraft and the associated coronal mass ejections (CMEs) observed by the Solar and Heliospheric Observatory (SOHO) mission. The type II burst catalog is derived from the Wind/WAVES catalog available at [http://ssed.gsfc.nasa.gov/waves/data_products.html](http://ssed.gsfc.nasa.gov/waves/data_products.html) by adding a few missing events.
+
+The CMEs in this catalog are called radio-loud CMEs because of their ability to produce type II radio bursts. The CME sources are also listed, as derived from the Solar Geophysical Data listing or from inner coronal images such as Yohkoh/SXT and SOHO/EIT. Some solar sources have also been obtained from Solarsoft Latest Events Archive after October 1, 2002: [http://www.lmsal.com/solarsoft/latest_events_archive.html](http://www.lmsal.com/solarsoft/latest_events_archive.html)
+
+
+Explanation of catalog entries:
+
+Column 1: Starting date of the type II burst (yyyy/mm/dd format)
+
+Column 2: Starting time (UT) of the type II burst (hh:mm format)
+
+Column 3: Ending date of the type II burst (mm/dd format; year in Column 1 applies)
+
+Column 4: Ending time of the Type II burst (hh:mm format)
+
+Column 5: Starting frequency of type II burst (kHz) [1]
+
+Column 6: Ending frequency of type II burst (kHz) [1]
+
+Column 7: Solar source location (Loc) of the associated eruption in heliographic coordinates [2]
+
+Column 8: NOAA active region number (NOAA) [3]
+
+Column 9: Soft X-ray flare importance (Imp) [4]
+
+Column 10: Date of the associated CME (mm/dd format, Year in Column 1 applies) [5]
+
+Column 11: Time of the associated CME (hh:mm format)
+
+Column 12: Central position angle (CPA, degrees) for non-halo CMEs [6]
+
+Column 13: CME width in the sky plane (degrees) [7]
+
+Column 14: CME speed in the sky plane (km/s)
+
+Column 15: Link to the daily proton, height-time, X-ray (PHTX) plots [8]
+
+Notes
+
+[1] ???? indicate that the starting and ending frequencies are not determined.
+
+[2] Heliographic coordinates. S25E16 means the latitude is 25 deg south and 16 deg east (source located in the southeast quadrant of the Sun. N denotes northern latitudes and W denotes western longitudes. Entries like SW90 indicate that the source information is not complete, but we can say that the eruption occurs on the west limb but at southern latitudes; if such entries have a subscript b (e.g., NE90b) it means that the source is behind the particular limb. This information is usually gathered from SOHO/EIT difference images, which show dimming above the limb in question. Completely backside events with no information on the source location are marked as “back”.
+
+[3] If the active region number is not available or if the source region is not an active region, the entry is “—-”. Filament regions are denoted by “FILA” or “DSF” for disappearing solar filament.
+
+[4] Soft X-ray flare size (peak flux in the 1-8 A channel) from GOES. “—-” means the soft X-ray flux is not available.
+
+[5] Lack of SOHO observations are noted as “LASCO DATA GAP”. Other reasons are also noted if there is no CME parameters measured.
+
+[6] The central position angle (CPA) is meaningful only for non-halo CMEs. For halo CMEs, the entry is “Halo”. For halo CMEs, the height-time measurements are made at a position angle where the halo appears to move the fastest. This is known as the measurement position angle (MPA) and can be found in the main catalog ([http://cdaw.gsfc.nasa.gov/CME_List](http://cdaw.gsfc.nasa.gov/CME_List)).
+
+[7] Width = 360 means the CME is a fill halo (see [6]). For some entries, there is a prefix “>”, which means the reported width is a lower limit.
+
+[8] ‘PHTX’ (proton, height-time, X-ray) link to three-day overview plots of solar energetic particle events (protons in the >10, >50 and >100 MeV GOES channels).
+
+
+
+Links:
+
+The CMEs and the type II bursts can be viewed together using the c2rdif_waves.html movies linked to the starting frequency (Column 5). The c3rdif_waves.html movies are linked to the ending frequencies (Column 6). The CMEs and the GOES flare light curves for a given type II burst can be viewed from the Javascript movies linked to the CME date (Column 10). The height-time plots (linear and quadratic) of the CMEs are linked to the CME speed (Column 14).
+
+PHTX plots are linked to Column 15.
+
+
+
+If you have questions, contact: Nat Gopalswamy ([gopals@ssedmail.gsfc.nasa.gov](mailto:gopals@ssedmail.gsfc.nasa.gov))
+
+This work is supported by NASA’s Virtual Observatories Program
+```
+
+
+
+
+
+#### Tasks
+
+1.  Use BeautifulSoup functions (e.g., find, findAll) and string functions (e.g., split and built-in slicing capabilities) to obtain each row of data as a long string. Create a DataFrame at this point so it’s easier to use melt or wide_to_long for the next few steps.
+2.  Use string::split and list comprehensions or similar to separate each line of text into a data row. Choose appropriate names for columns.
+
+The result of this step should be similar to:
+
+```
+Dimension: 482 × 14
+
+start_date start_time end_date end_time start_frequency end_frequency flare_location flare_region
+
+* <chr>  <chr>  <chr>  <chr> <chr> <chr>  <chr>  <chr>
+
+1  1997/04/01  14:00  04/01  14:15  8000  4000 S25E16 8026
+
+2  1997/04/07  14:30  04/07  17:30 11000  1000 S28E19 8027
+
+3  1997/05/12  05:15  05/14  16:00 12000  80 N21W08 8038
+
+4  1997/05/21  20:20  05/21  22:00  5000 500 N05W12 8040
+
+5  1997/09/23  21:53  09/23  22:16  6000  2000 S29E25 8088
+
+6  1997/11/03  05:15  11/03  12:00 14000 250 S20W13 8100
+
+7  1997/11/03  10:30  11/03  11:30 14000  5000 S16W21 8100
+
+8  1997/11/04  06:00  11/05  04:30 14000 100 S14W33 8100
+
+9  1997/11/06  12:20  11/07  08:30 14000 100 S18W63 8100
+
+10 1997/11/27  13:30  11/27  14:00 14000  7000 N17E63 8113
+
+... with 472 more rows, and 6 more variables: flare_classification <chr>, cme_date <chr>, cme_time <chr>, cme_angle <chr>, cme_width <chr>, cme_speed <chr>
+```
+
+
+
+
+### Step 4: Tidy the NASA the table (15 pts)
+
+Now, we tidy up the NASA table. Here we will code missing observations properly, recode columns that correspond to more than one piece of information, and treat dates and times appropriately.
+
+1.  Recode any missing entries as NaN. Refer to the data description in [http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2_description.htm](http://cdaw.gsfc.nasa.gov/CME_list/radio/waves_type2_description.htm)  (and above) to see how missing entries are encoded in each column. Be sure to look carefully at the actual data, as the nasa descriptions might not be completely accurate.
+2.  The CPA column (cme_angle) contains angles in degrees for most rows, except for halo flares, which are coded as Halo. Create a new column that indicates if a row corresponds to a halo flare or not, and then replace Halo entries in the cme_angle column as NA.
+3.  The width column indicates if the given value is a lower bound. Create a new column that indicates if width is given as a lower bound, and remove any non-numeric part of the width column.
+4.  Combine date and time columns for start, end and cme so they can be encoded as datetime objects.
+
+
+
+The output of this step should be similar to this:
+
+```
+start_datetime  end_datetime start_frequency end_frequency flare_location flare_region importance  cme_datetime  cpa width speed  plot is_halo width_lower_bound
+
+0 1997-04-01 14:00:00 1997-04-01 14:15:00  8000  4000 S25E16 8026 M1.3 1997-04-01 15:18:00 74  79 312  PHTX False False
+
+1 1997-04-07 14:30:00 1997-04-07 17:30:00 11000  1000 S28E19 8027 C6.8 1997-04-07 14:27:00  NaN 360 878  PHTX  True False
+
+2 1997-05-12 05:15:00 1997-05-14 16:00:00 12000  80 N21W08 8038 C1.3 1997-05-12 05:30:00  NaN 360 464  PHTX  True False
+
+3 1997-05-21 20:20:00 1997-05-21 22:00:00  5000 500 N05W12 8040 M1.3 1997-05-21 21:00:00  263 165 296  PHTX False False
+
+4 1997-09-23 21:53:00 1997-09-23 22:16:00  6000  2000 S29E25 8088 C1.4 1997-09-23 22:02:00  133 155 712  PHTX False False
+
+5 1997-11-03 05:15:00 1997-11-03 12:00:00 14000 250 S20W13 8100 C8.6 1997-11-03 05:28:00  240 109 227  PHTX False False
+```
+
+
+
+
+
+
+
+## Part 2: Analysis
+
+Now that you have data from both sites, let’s start some analysis.
+
+### Question 1: Replication (10 pts)
+
+Can you replicate the top 50 solar flare table in [SpaceWeatherLive.com](https://www.spaceweatherlive.com/en/solar-activity/top-50-solar-flares) exactly using the data obtained from NASA? That is, if you get the top 50 solar flares from the NASA table based on their classification (e.g., X28 is the highest), do you get data for the same solar flare events?
+
+Include code used to get the top 50 solar flares from the NASA table (be careful when ordering by classification). Write a sentence or two discussing how well you can replicate the SpaceWeatherLive data from the NASA data.
+
+### Question 2: Integration (15 pts)
+
+Write a function that finds the best matching row in the NASA data for each of the top 50 solar flares in the SpaceWeatherLive data. Here, you have to decide for yourself how you determine what is the best matching entry in the NASA data for each of the top 50 solar flares.
+
+In your submission, include an explanation of how you are defining best matching rows across the two datasets in addition to the code used to find the best matches. Finally, use your function to add a new column to the NASA dataset indicating its rank according to SpaceWeatherLive, if it appears in that dataset.
+
+### Question 3: Analysis (10 pts)
+
+Prepare one plot that shows the top 50 solar flares in context with all data available in the NASA dataset. Here are some possibilities (you can do something else)
+
+1.  Plot attributes in the NASA dataset (e.g., starting or ending frequenciues, flare height or width) over time. Use graphical elements (e.g., text or points) to indicate flares in the top 50 classification.
     
-    It is a configuration file where the network components are specified.
-</li>
-<li> All the test code is in the test directory</li>
-</ul>
-All of these and other starter code files can be accessed from the following link: <a href="https://drive.google.com/drive/folders/1bIbK2fin-6Qnz0Jb_BCxNci1u4kb1umc">https://drive.google.com/drive/folders/1bIbK2fin-6Qnz0Jb_BCxNci1u4kb1umc</a>
-
-## What to Implement
-
-You're supposed to implement the following:
-<ul>
-  <li> Forward Pass<br>
-    Forward pass algorithm to train your Convolution Neural Network. This will work in conjunction with the backpropagation algorithm  that is provided to you. You will be implementing this algorithm in <b>cnnConvolve.m</b> file.
-  </li>
-  <li> Subsampling<br>
-    After convolution layer, subsample the output by implementing the following two layers in cnnPool.m :
-   <ul>
-     <li>maxpool</li>
-     <li>averagepool</li>
-   </ul>   
- </li>
- <li> Configuration<br>
-    Although you wont't need to change either the fully connected layer or the softmax layer
-you would require more than one convolution and the subsampling layer. In order to add new layers you would have to modify config.m file. The new layers would have to go after the following lines in the file:<br>
-   cnnConfig.layer{2}.type = 'conv';<br>
-cnnConfig.layer{2}.filterDim = [9 9];<br>
-cnnConfig.layer{2}.numFilters = 20;<br>
-cnnConfig.layer{2}.nonLinearType = 'sigmoid';<br>
-cnnConfig.layer{2}.conMatrix = ones(1,20);<br>
-cnnConfig.layer{3}.type = 'pool';<br>
-cnnConfig.layer{3}.poolDim = [2 2];<br>
-cnnConfig.layer{3}.poolType = 'maxpool';
-
-<br>
-<br>
-However, make sure you change the index of the subsequent layers since the numbers are sequential.
-  </li>
- </ul>
+2.  Do flares in the top 50 tend to have Halo CMEs? You can make a barplot that compares the number (or proportion) of Halo CMEs in the top 50 flares vs. the dataset as a whole.
+    
+3.  Do strong flares cluster in time? Plot the number of flares per month over time, add a graphical element to indicate (e.g., text or points) to indicate the number of strong flares (in the top 50) to see if they cluster.
     
 
-<a name='sub'></a>
-## Submission Guidelines
-<b> We will deduct points if your submission does not comply with the following guidelines.</b><br>
-You're supposed to submit the following:<br>
-<ul>
-  <li> All the files that contain your code: cnnConvolve.m, cnnPool.m, config.m or any other files where you implement your code or make modifications.</li>
-  <li> Accuracy for a single convolution and subsampling layer with Sigmoid activation function.</li>
-  <li> Accuracy for a single convolution and subsampling layer with a ReLu activation function.</li>
-  <li> Compare the results between maxpooling and average pooling.</li>
-  <li> Try with more than one convolution and subsampling layers for both sigmoid and ReLu activation functions. </li>
-  <li> Submit a confusion matrix and the accuracy for the best configuration. </li>
-  <li> Dimensions of the Input and output of each layer (convolution(s), maxpool(s) / average pool(s), fully connected layer, and softmax layer) for your best config.</li>
-</ul>
-<br>
-Please submit the project <b> once </b> for your group -- there's no need for each member to submit it.
+## Submission
 
+Prepare an Jupyter Notebook file that includes for each step in Part 1: (a) code to carry out the step discussed, (b) output showing the output of your code, similar to the examples above, and (c) a short prose description of how your code works. For questions 1 and 2 of Part 2, follow the instructions there. For Question 3 of part 2 provide: (a) a short description (2 sentences) of what the intent of your plot is (think in terms of our discussion on how we show variation, co-variation in terms of central trend, spread, skew etc.), (b) code to produce your plot, (c) a short text description of your plot, and (d) a sentence or two of interpretation of your plot (again think of variation, co-variation, etc.).
 
+Submit the resulting .ipynb to ELMS at: [https://umd.instructure.com/courses/1246969/assignments/4732533](https://umd.instructure.com/courses/1246969/assignments/4732533)
 
-<a name='coll'></a>
-## Collaboration Policy
-We encourage you to work closely with your groupmates, including collaborating on writing code.  With students outside your group, you may discuss methods and ideas but may not share code.  
+### Group work
 
-For the full collaboration policy, including guidelines on citations and limitations on using online resources, see <a href="https://cmsc426spring2019.github.io/index.html">the course website</a>.
+You are encouraged to work in small groups, but you must prepare your own writeup and submit it. Include the names of the peers who you worked with in the writeup.

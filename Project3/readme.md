@@ -2,7 +2,7 @@
 
 Due: July 3, 2019
 
-## Part 1: Regression analysis of Gapminder data
+## Regression analysis of Gapminder data
 
 In this part of this project you will practice and experiment with linear regression using data from <a href="http://gapminder.org">gapminder.org</a>. We recommend spending a little time looking at material there, it is quite an informative site.
 

@@ -88,3 +88,16 @@ The F-test is obtained by calling fvalue from the results of exercises 2 and 6.
 **Question 13**: <em>Is the interaction model significantly better than the year-only model? Why?</em>
 
 **Exercise 8**: <em>Make a residuals vs. year violin plot for the interaction model. Comment on how well it matches assumptions of the linear regression model. Do the same for a residuals vs. fitted values model.</em>
+
+## Submission
+
+Prepare a Jupyter notebook that includes for each Problem: (a) code to carry out the step discussed, (b) output showing the result of your code, and (c) a short prose description of how your code works. Remember, the writeup you are preparing is intended to communicate your analysis effectively. Thoughtlessly showing large amounts of output in your writeup defeats that purpose.
+
+All axes in plots should be labeled in an informative manner. Your answers to any question that refers to a plot should include both (a) a text description of your plot, and (b) a sentence or two of interpretation as it relates to the question asked.
+
+Submit to ELMS at Project 3 Assignment Submission and a .pdf to Gradescope.
+
+## Group work
+
+You are encouraged to work in small groups, but you must prepare your own writeup and submit it. Include the names of the peers who you worked with in the writeup.
+

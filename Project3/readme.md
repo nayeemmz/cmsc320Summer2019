@@ -46,7 +46,7 @@ lggplot(aes(x='year', y='lifeExp'), data=data) +\
 
 <img src="figs/violin.png" height="242">
 
-This type of plot is called a <em>violin plot</em>, and it displays the distribution of the variable in the y-axis for each value of the variable in the x-axis.
+This type of plot is called a <em>violin plot</em>, and it displays the distribution of the variable in the y-axis for each value of the variable in the x-axis. You can create a violin plot using seaborn library.
 
 **Question 2**: <em>How would you describe the distribution of life expectancy across countries for individual years? Is it skewed, or not? Unimodal or not? Symmetric around it’s center?</em>
 
@@ -54,7 +54,7 @@ Based on this plot, consider the following questions.
 
 **Question 3**: <em>Suppose I fit a linear regression model of life expectancy vs. year (treating it as a continuous variable), and test for a relationship between year and life expectancy, will you reject the null hypothesis of no relationship? (do this without fitting the model yet. I am testing your intuition.)</em>
 
-**Question 4**: <em>What would a violin plot of residuals from the linear model in Question 3 vs. year look like? (Again, don’t do the analysis yet, answer this intuitively)</em>
+**Question 4**: <em>What would a violin plot of residuals from the linear model in Question 3 vs. year look like? (Again, don’t do the analysis yet, answer this intuitively)</em>. 
 
 **Question 5**: <em>According to the assumptions of the linear regression model, what <strong>should</strong> that violin plot look like?</em>
 
@@ -76,13 +76,14 @@ Based on this plot, consider the following questions.
 
 **Question 10**: <em>Based on this plot, should your regression model include an interaction term for continent <strong>and</strong> year? Why?</em>
 
-**Exercise 6**: <em>Fit a linear regression model for life expectancy including a term for an interaction between continent and year.</em>
+**Exercise 6**: <em>Fit a linear regression model for life expectancy including a term for an interaction between continent and year.</em>You may import statsmodel.formula.api to run ordinary least squares for this. 
 
 **Question 11**: <em>Are all parameters in the model significantly different from zero? If not, which are not significantly different from zero?</em>
 
 **Question 12**: <em>On average, by how much does life expectancy increase each year for each continent? (Provide code to answer this question by extracting relevant estimates from model fit)</em>
 
 **Exercise 7**: <em> Perform an F-test that compares how well two models fit your data: (a) the linear regression models from Exercise 2 (only including year as a covariate) and (b) Exercise 6 (including interaction between year and continent).</em>
+The F-test is obtained by calling fvalue from the results of exercises 2 and 6.
 
 **Question 13**: <em>Is the interaction model significantly better than the year-only model? Why?</em>
 

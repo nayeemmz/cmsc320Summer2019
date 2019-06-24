@@ -89,7 +89,7 @@ The F-test is obtained by calling fvalue from the results of exercises 2 and 6.
 
 **Exercise 8**: <em>Make a residuals vs. year violin plot for the interaction model. Comment on how well it matches assumptions of the linear regression model. Do the same for a residuals vs. fitted values model.</em>
 
-
+<!--
 ## Part 2: Classification
 
 ### Gradient Descent
@@ -187,3 +187,4 @@ plt.plot(gen_data_x, dummy)</code></pre>
 <li><p>Include all code required to perform the 10-fold cross-validation procedure on your three algorithms.</p></li>
 <li><p>Writeup the result of your 10-fold cross-validation procedure. Make sure to report the 10-fold CV error estimate (with standard error) of each of the three algorithms. Also report on the result of the <em>two</em> paired t-tests comparing your logistic regression algorithm with your chosen two algorithms.</p></li>
 </ol>
+-->

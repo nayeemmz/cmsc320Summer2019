@@ -54,9 +54,9 @@ Based on this plot, consider the following questions.
 
 **Question 3**: <em>Suppose I fit a linear regression model of life expectancy vs. year (treating it as a continuous variable), and test for a relationship between year and life expectancy, will you reject the null hypothesis of no relationship? (do this without fitting the model yet. I am testing your intuition.)</em>
 
-**Question 4**: <em>What would a violin plot of residuals from the linear model in Question 3 vs. year look like? (Again, don’t do the analysis yet, answer this intuitively)</em>. 
+**Question 4**: <em>What would a violin plot of residuals from the linear model in Question 3 vs. year look like? (Again, don’t do the analysis yet, answer this intuitively)</em>. You would answer this question in the context of the variables in Question 3.
 
-**Question 5**: <em>According to the assumptions of the linear regression model, what <strong>should</strong> that violin plot look like?</em>
+**Question 5**: <em>According to the assumptions of the linear regression model, what <strong>should</strong> that violin plot look like?</em> You would answer this question as general property of the residuals of the linear regression. We are looking to see if the Question 3 model fits the general assumptions.
 
 **Exercise 2**: <em>Fit a linear regression model using, e.g., the `LinearRegression` function from Scikit-Learn or the closed-form solution we derived in class, for life expectancy vs. year (as a continuous variable). </em>
 

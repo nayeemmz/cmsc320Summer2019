@@ -60,7 +60,7 @@ Based on this plot, consider the following questions.
 
 **Exercise 2**: <em>Fit a linear regression model using, e.g., the `LinearRegression` function from Scikit-Learn or the closed-form solution we derived in class, for life expectancy vs. year (as a continuous variable). </em>
 
-**Question 6**: <em>On average, by how much does life expectancy increase every year around the world?</em> To find the null hypothesis and other statistics, you may use statsmodels.formula.api library. In that library there is a function for ordinary least squares. for example,
+**Question 6**: <em>On average, by how much does life expectancy increase every year around the world?</em> To find the p-value and other statistics, you may use statsmodels.formula.api library. In that library there is a function for ordinary least squares. for example,
 ```
  statsmodels.formula.api.ols(formula="var1 ~ var2 ", data=<name of the dataset>).fit()
 ```

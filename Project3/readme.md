@@ -62,7 +62,10 @@ Based on this plot, consider the following questions.
 
 **Question 6**: <em>On average, by how much does life expectancy increase every year around the world?</em>
 
-**Question 7**: <em>Do you reject the null hypothesis of no relationship between year and life expectancy? Why?</em>
+**Question 7**: <em>Do you reject the null hypothesis of no relationship between year and life expectancy? Why?</em>. To find the null hypothesis and other statistics, you may use statsmodels.formula.api library. In that library there is a function for ordinary least squares. for example,
+```
+ statsmodels.formula.api.ols(formula="var1 ~ var2 ", data=<name of the dataset>).fit()
+```
 
 **Exercise 3**: <em>Make a violin plot of residuals vs. year for the linear model from Exercise 2.</em>
 

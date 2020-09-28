@@ -116,7 +116,7 @@ $ standardized\_payroll_{ij} = \frac{{payroll}_{ij} - \overline{payroll}_{j} }{{
 ```
 
 
-![standardized payroll](figs/prob5.jpg)
+![standardized payroll](figs/prob5.png)
 
 for team `i` in year `j`.
 
